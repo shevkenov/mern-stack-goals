@@ -21,7 +21,7 @@ const setGoal = async (req, res) => {
         res.status(400);
         throw new Error("Please add a goal");
     }
-
+    
     try {
         const newGoal = await Goal.create({
             text
@@ -40,6 +40,14 @@ const updateGoal = async(req, res) => {
     try {
         const { id } = req.params;
         const { text } = req.body;
+
+        const goal = await Goal.findById(id);
+
+        if(!goal){
+            res.status(400);
+            throw new Error('Goal not found');
+        }
+        
         const updatedGoal = await Goal.findByIdAndUpdate(id, {
             text
         }, {new: true})
@@ -55,8 +63,15 @@ const updateGoal = async(req, res) => {
 const removeGoal = async (req, res) => {
     try {
         const { id } = req.params;
-        const deletedGoal = await Goal.findByIdAndDelete(id)
-        res.status(200).json(deletedGoal);
+        const goal = await Goal.findById(id);
+
+        if(!goal){
+            res.status(400);
+            throw new Error('Goal not found');
+        }
+
+        await goal.remove();
+        res.status(200).json({id});
     } catch (error) {
         console.log(error)
     }
