@@ -15,11 +15,12 @@ const auth = async(req, res, next) => {
             const {id} = jwt.verify(token, process.env.JWT_SECRET);
 
             const user = await User.findById(id).select("-password");
+
             if(!user){
                 res.status(401)
                 throw new Error("Invalid user");
             }
-            req.user = user;
+            req.user = id;
             next()
         }else{
             res.status(401)

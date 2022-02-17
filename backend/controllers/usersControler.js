@@ -71,8 +71,12 @@ const loginUser = async(req, res, next) => {
 //@access   Private
 const getMe = async(req, res, next) => {
     try {
+        const user = await User.findById(req.user);
+
         res.status(200).json({
-            ...req.user
+            id: user._id,
+            name: user.name,
+            email: user.email
         });
     } catch (error) {
         console.log(error)
